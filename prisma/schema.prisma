@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model State {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  cities   City[]
+  colleges College[]
+
+  @@map("states")
+}
+
+model City {
+  id       Int       @id @default(autoincrement())
+  name     String
+  stateId  Int
+  state    State     @relation(fields: [stateId], references: [id])
+  colleges College[]
+
+  @@map("cities")
+}
+
+model College {
+  id         Int                 @id @default(autoincrement())
+  name       String
+  score      Int
+  cityId     Int
+  stateId    Int
+  city       City                @relation(fields: [cityId], references: [id])
+  state      State               @relation(fields: [stateId], references: [id])
+  placements CollegePlacement[]
+  courses    CollegeWiseCourse[]
+
+  @@map("colleges")
+}
+
+model CollegePlacement {
+  id               Int     @id @default(autoincrement())
+  collegeId        Int
+  year             Int
+  highestPlacement Float
+  averagePlacement Float
+  medianPlacement  Float
+  placementRate    Float
+  college          College @relation(fields: [collegeId], references: [id])
+
+  @@map("college_placements")
+}
+
+model CollegeWiseCourse {
+  id             Int     @id @default(autoincrement())
+  collegeId      Int
+  courseName     String
+  courseDuration Int
+  courseFee      Float
+  college        College @relation(fields: [collegeId], references: [id])
+
+  @@map("college_wise_courses")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
