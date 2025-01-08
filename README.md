@@ -120,5 +120,5 @@ This repository contains a backend application built with **NestJS** and **Postg
    - Included for API testing.
 
 3. **Deployed URLs**
-   - API Base URL: [https://your-api.render.com](https://your-api.render.com)
+   - API Base URL: https://sportsdunia-tmsw.onrender.com
 
